@@ -23,6 +23,22 @@ A Node.js utility for parsing and comparing questions and answers from two `.doc
     npm install
     ```
 
+## Format
+1. Question: Each question should start with a number (e.g., '1. ','2. ') followed by the question text, ending with a '?' or ':'.
+2. Answer:
+    - Each answer option begins with a capital letter (A., B., C., D., ..., Z.), followed by the answer text, ending with a ';'.
+    - Ensure that all answer choices are aligned and listed directly below the question.
+3. Choose an answer:
+    - Make sure the selected answer has a '; =' at the end of the sentence
+    - Unselected answers will have a ';' at the end of the sentence.
+  
+## Example:
+1. What is the capital of France?
+A. Berlin;
+B. Madrid;
+C. Paris; =
+D. Rome;
+
 ## Usage
 1. Ensure that you have two `.docx` files:
    - `questions.docx` (contains the questions and correct answers)
