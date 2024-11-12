@@ -33,11 +33,13 @@ A Node.js utility for parsing and comparing questions and answers from two `.doc
     - Unselected answers will have a ';' at the end of the sentence.
   
 ## Example:
+```vbnet
 1. What is the capital of France?
 A. Berlin;
 B. Madrid;
 C. Paris; =
 D. Rome;
+```
 
 ## Usage
 1. Ensure that you have two `.docx` files:
