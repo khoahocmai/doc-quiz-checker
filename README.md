@@ -1,4 +1,4 @@
-# compare-answers
+# doc-quiz-checker
 
 A Node.js utility for parsing and comparing questions and answers from two `.docx` files (e.g., `questions.docx` and `answers.docx`). This tool extracts questions and their options from the files, then checks for correctness by comparing the answers in each file.
 
