@@ -96,7 +96,7 @@ function compareAnswers(
         // Log only if suppressUnansweredLog is false
         console.log(
           chalk.yellow(
-            `Un-answered question:\n${index + 1}. ${q2.question}\n${q2.options
+            `Unanswered question:\n${index + 1}. ${q2.question}\n${q2.options
               .map((opt, i) => `${String.fromCharCode(65 + i)}. ${opt.text}`)
               .join("\n")}\n`
           )
@@ -111,7 +111,7 @@ function compareAnswers(
       incorrect++;
       console.log(
         chalk.red(
-          `Not correct question:\n${index + 1}. ${
+          `Incorrect question:\n${index + 1}. ${
             q1.question
           }\nYour answers: ${userAnswerTexts.join(
             ", "
