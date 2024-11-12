@@ -76,7 +76,11 @@ function getCorrectAnswerTexts(question: Question): string[] {
  * @param {Question[]} file1 - Array of Question objects representing the correct answers.
  * @param {Question[]} file2 - Array of Question objects representing the user's answers.
  */
-function compareAnswers(file1: Question[], file2: Question[]): void {
+function compareAnswers(
+  file1: Question[],
+  file2: Question[],
+  suppressUnansweredLog: boolean
+): void {
   let correct = 0;
   let incorrect = 0;
   let unanswered = 0;
@@ -88,13 +92,16 @@ function compareAnswers(file1: Question[], file2: Question[]): void {
 
     if (userAnswerTexts.length === 0) {
       unanswered++;
-      console.log(
-        chalk.yellow(
-          `Un-answered question:\n${index + 1}. ${q2.question}\n${q2.options
-            .map((opt, i) => `${String.fromCharCode(65 + i)}. ${opt.text}`)
-            .join("\n")}\n`
-        )
-      );
+      if (!suppressUnansweredLog) {
+        // Log only if suppressUnansweredLog is false
+        console.log(
+          chalk.yellow(
+            `Un-answered question:\n${index + 1}. ${q2.question}\n${q2.options
+              .map((opt, i) => `${String.fromCharCode(65 + i)}. ${opt.text}`)
+              .join("\n")}\n`
+          )
+        );
+      }
     } else if (
       JSON.stringify(correctAnswerTexts.sort()) ===
       JSON.stringify(userAnswerTexts.sort())
@@ -114,11 +121,15 @@ function compareAnswers(file1: Question[], file2: Question[]): void {
     }
   });
 
-  console.log(
-    `\nSummary:\nTotal: ${
-      correct + incorrect + unanswered
-    } question(s),\nCorrect: ${correct} question(s),\nIncorrect: ${incorrect} question(s),\nUn-answered: ${unanswered} question(s)`
-  );
+  const questionResults = {
+    "Total questions": { Count: correct + incorrect + unanswered },
+    Correct: { Count: correct },
+    Incorrect: { Count: incorrect },
+    Unanswered: { Count: unanswered },
+  };
+
+  console.log("Summary:");
+  console.table(questionResults);
 }
 
 /**
@@ -127,7 +138,11 @@ function compareAnswers(file1: Question[], file2: Question[]): void {
  * parses both files, and then compares the answers.
  */
 async function main() {
-  const folderPath = process.argv[2];
+  const args = process.argv.slice(2);
+  const folderPath = args
+    .find((arg) => arg.startsWith("directory="))
+    ?.split("=")[1];
+  const suppressUnansweredLog = args.some((arg) => arg === "nolog=unanswered");
   if (!folderPath) {
     console.error("Please provide a folder path as an argument.");
     process.exit(1);
@@ -158,7 +173,7 @@ async function main() {
   try {
     const file1 = await parseFile(questionFilePath);
     const file2 = await parseFile(answerFilePath);
-    compareAnswers(file1, file2);
+    compareAnswers(file1, file2, suppressUnansweredLog);
   } catch (error) {
     console.error("An error occurred while processing the files:", error);
   }
