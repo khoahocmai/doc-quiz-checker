@@ -60,11 +60,11 @@ D. Rome;
    ```bash
    npm run dev directory="path/to/your/directory"
    ```
-   or
+   - or
    ```bash
-   // 'nolog' it's mean this don't log the un-answered
    npm run dev directory="path/to/your/directory" nolog=unanswered
    ```
+   - 'nolog' it's mean this don't log the un-answered
 
 ## Output
 
