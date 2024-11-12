@@ -63,4 +63,4 @@ D. Rome;
 - **mammoth**: For extracting raw text from `.docx` files.
 - **chalk**: For coloring console output.
 
-👨‍💻 Created by khoahocmai.
+👨‍💻 [Created by khoahocmai](https://github.com/khoahocmai)
