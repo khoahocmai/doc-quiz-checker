@@ -139,7 +139,9 @@ async function main() {
     !fs.existsSync(resolvedFolderPath) ||
     !fs.statSync(resolvedFolderPath).isDirectory()
   ) {
-    console.error("The specified path is not a valid directory.");
+    console.error(
+      "The specified path is not a valid directory. The path must be in English and contain no spaces."
+    );
     process.exit(1);
   }
 
