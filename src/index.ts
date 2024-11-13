@@ -75,6 +75,7 @@ function getCorrectAnswerTexts(question: Question): string[] {
  *
  * @param {Question[]} file1 - Array of Question objects representing the correct answers.
  * @param {Question[]} file2 - Array of Question objects representing the user's answers.
+ * @param {boolean} suppressUnansweredLog - A flag to suppress logging of unanswered questions.
  */
 function compareAnswers(
   file1: Question[],
@@ -88,6 +89,20 @@ function compareAnswers(
   file1.forEach((q1, index) => {
     const q2 = file2[index];
     const correctAnswerTexts = getCorrectAnswerTexts(q1);
+
+    if (!q2) {
+      // Handle missing question in file2
+      unanswered++;
+      console.log(
+        chalk.yellow(
+          `No corresponding answer found for question:\n${index + 1}. ${
+            q1.question
+          }\n`
+        )
+      );
+      return; // Skip to the next question
+    }
+
     const userAnswerTexts = q2 ? getCorrectAnswerTexts(q2) : [];
 
     if (userAnswerTexts.length === 0) {
