@@ -82,14 +82,15 @@ Your answers: Earth
 Correct answers: Jupiter
 
 Summary:
-+-------------------+-------+
-| (index)           | Count |
-+-------------------+-------+
-| Total questions   |   5   |
-| Correct           |   3   |
-| Incorrect         |   1   |
-| Unanswered        |   1   |
-+-------------------+-------+
++--------------------+--------+
+| (index)            | Count  |
++--------------------+--------+
+| Total questions    | 5      |
+| Correct            | 3      |
+| Incorrect          | 1      |
+| Unanswered         | 1      |
+| Correct percentage │ '60.0%'|
++-------------------+---------+
 ```
 
 ## Dependencies
