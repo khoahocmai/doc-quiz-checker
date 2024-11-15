@@ -111,9 +111,9 @@ function compareAnswers(
         // Log only if suppressUnansweredLog is false
         console.log(
           chalk.yellow(
-            `Unanswered question:\n${index + 1}. ${q2.question}\n${q2.options
-              .map((opt, i) => `${String.fromCharCode(65 + i)}. ${opt.text}`)
-              .join("\n")}\n`
+            `*** Unanswered question:\n${index + 1}. ${
+              q2.question
+            }\n${q2.options.map((opt, i) => `${opt.text};`).join("\n")}\n`
           )
         );
       }
@@ -126,12 +126,16 @@ function compareAnswers(
       incorrect++;
       console.log(
         chalk.red(
-          `Incorrect question:\n${index + 1}. ${
-            q1.question
-          }\nYour answers: ${userAnswerTexts.join(
-            ", "
-          )}\nCorrect answers: ${correctAnswerTexts.join(", ")}\n`
-        )
+          `!!! Incorrect question:\n${index + 1}. ${q1.question}\n` +
+            `- Your answers:\n` +
+            userAnswerTexts.map((answer) => `+ ${answer}`).join("\n") +
+            `\n`
+        ) +
+          chalk.green(
+            `- Correct answers:\n` +
+              correctAnswerTexts.map((answer) => `+ ${answer}`).join("\n") +
+              `\n`
+          )
       );
     }
   });
