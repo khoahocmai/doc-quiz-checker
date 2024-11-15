@@ -29,20 +29,20 @@ async function parseFile(filePath: string): Promise<Question[]> {
       currentQuestion = { question: combinedMatch[2].trim(), options: [] };
 
       // Split answers after question
-      const answers = combinedMatch[3].split(/(?=[A-D]\.)/);
+      const answers = combinedMatch[3].split(/(?=[A-Z]\.)/);
       answers.forEach((answer) => {
-        const optionMatch = answer.match(/^([A-D])\.\s*(.*?)([;=]?)\s*$/);
+        const optionMatch = answer.match(/^([A-Z])\.\s*(.*?)([;=]?)\s*$/);
         if (optionMatch) {
-          const text = optionMatch[2].trim();
+          const text = optionMatch[1].trim() + ". " + optionMatch[2].trim();
           const isCorrect = optionMatch[3] === "=";
           currentQuestion?.options.push({ text, isCorrect });
         }
       });
     } else if (currentQuestion) {
       // Handle separate answer lines
-      const optionMatch = line.match(/^([A-D])\.\s*(.*?)([;=]?)\s*$/);
+      const optionMatch = line.match(/^([A-Z])\.\s*(.*?)([;=]?)\s*$/);
       if (optionMatch) {
-        const text = optionMatch[2].trim();
+        const text = optionMatch[1].trim() + ". " + optionMatch[2].trim();
         const isCorrect = optionMatch[3] === "=";
         currentQuestion.options.push({ text, isCorrect });
       }
