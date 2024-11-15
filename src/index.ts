@@ -26,7 +26,10 @@ async function parseFile(filePath: string): Promise<Question[]> {
       if (currentQuestion) {
         questions.push(currentQuestion);
       }
-      currentQuestion = { question: combinedMatch[2].trim(), options: [] };
+      currentQuestion = {
+        question: combinedMatch[1] + " " + combinedMatch[2].trim(),
+        options: [],
+      };
 
       // Split answers after question
       const answers = combinedMatch[3].split(/(?=[A-Z]\.)/);
@@ -87,7 +90,9 @@ function compareAnswers(
   let unanswered = 0;
 
   file1.forEach((q1, index) => {
-    const q2 = file2[index];
+    const q2 = file2.find((question) =>
+      question.question.startsWith(q1.question.split(" ")[0])
+    );
     const correctAnswerTexts = getCorrectAnswerTexts(q1);
 
     if (!q2) {
@@ -95,9 +100,7 @@ function compareAnswers(
       unanswered++;
       console.log(
         chalk.yellow(
-          `No corresponding answer found for question:\n${index + 1}. ${
-            q1.question
-          }\n`
+          `[!] No corresponding answer found for question:\n${q1.question}\n`
         )
       );
       return; // Skip to the next question
@@ -110,10 +113,10 @@ function compareAnswers(
       if (!suppressUnansweredLog) {
         // Log only if suppressUnansweredLog is false
         console.log(
-          chalk.yellow(
-            `*** Unanswered question:\n${index + 1}. ${
-              q2.question
-            }\n${q2.options.map((opt, i) => `${opt.text};`).join("\n")}\n`
+          chalk.cyan(
+            `[U] Unanswered question:\n${q2.question}\n${q2.options
+              .map((opt, i) => `${opt.text};`)
+              .join("\n")}\n`
           )
         );
       }
@@ -126,7 +129,7 @@ function compareAnswers(
       incorrect++;
       console.log(
         chalk.red(
-          `!!! Incorrect question:\n${index + 1}. ${q1.question}\n` +
+          `[X] Incorrect question:\n${q1.question}\n` +
             `- Your answers:\n` +
             userAnswerTexts.map((answer) => `+ ${answer}`).join("\n") +
             `\n`
