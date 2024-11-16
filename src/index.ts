@@ -25,10 +25,10 @@ async function parseFile(filePath: string): Promise<Question[]> {
 
   lines.forEach((line) => {
     // Kiểm tra xem dòng có chứa câu hỏi và đáp án không
-    const match = line.match(/^(\d+\.)\s+(.*?[?:])\s*(A\..*)$/);
-    if (match) {
-      const questionText = `${match[1]} ${match[2].trim()}`;
-      const optionsText = match[3];
+    const questionMatch = line.match(/^(\d+\.)\s+(.*?[?:])\s*(A\..*)$/);
+    if (questionMatch) {
+      const questionText = `${questionMatch[1]} ${questionMatch[2].trim()}`;
+      const optionsText = questionMatch[3];
 
       // Tách các đáp án
       const options = optionsText
@@ -211,7 +211,6 @@ async function main() {
  *
  * @returns {void}
  */
-
 function displayUsage() {
   console.log(
     `========================================================================================`
