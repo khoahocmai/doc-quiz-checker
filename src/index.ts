@@ -57,6 +57,11 @@ async function parseFile(filePath: string): Promise<Question[]> {
     questions.push(currentQuestion);
   }
 
+  if (questions.length === 0) {
+    console.warn(`No valid questions found in ${filePath}.`);
+    return [];
+  }
+
   return questions;
 }
 
@@ -89,10 +94,9 @@ function compareAnswers(
   let incorrect = 0;
   let unanswered = 0;
 
+  const questionMap = new Map(file2.map((q) => [q.question.split(" ")[0], q]));
   file1.forEach((q1, index) => {
-    const q2 = file2.find((question) =>
-      question.question.startsWith(q1.question.split(" ")[0])
-    );
+    const q2 = questionMap.get(q1.question.split(" ")[0]);
     const correctAnswerTexts = getCorrectAnswerTexts(q1);
 
     if (!q2) {
@@ -121,8 +125,8 @@ function compareAnswers(
         );
       }
     } else if (
-      JSON.stringify(correctAnswerTexts.sort()) ===
-      JSON.stringify(userAnswerTexts.sort())
+      JSON.stringify(correctAnswerTexts.map((a) => a.toLowerCase()).sort()) ===
+      JSON.stringify(userAnswerTexts.map((a) => a.toLowerCase()).sort())
     ) {
       correct++;
     } else {
@@ -131,12 +135,12 @@ function compareAnswers(
         chalk.red(
           `[X] Incorrect question:\n${q1.question}\n` +
             `- Your answers:\n` +
-            userAnswerTexts.map((answer) => `+ ${answer}`).join("\n") +
+            userAnswerTexts.map((answer) => `  + ${answer}`).join("\n") +
             `\n`
         ) +
           chalk.green(
             `- Correct answers:\n` +
-              correctAnswerTexts.map((answer) => `+ ${answer}`).join("\n") +
+              correctAnswerTexts.map((answer) => `  + ${answer}`).join("\n") +
               `\n`
           )
       );
@@ -144,7 +148,8 @@ function compareAnswers(
   });
 
   const totalQuestions = correct + incorrect + unanswered;
-  const correctPercentage = (correct / totalQuestions) * 100;
+  const correctPercentage =
+    totalQuestions === 0 ? 0 : (correct / totalQuestions) * 100;
 
   const questionResults = {
     "Total questions": { Count: totalQuestions },
@@ -154,7 +159,7 @@ function compareAnswers(
     "Correct percentage": { Count: `${correctPercentage.toFixed(1)}%` },
   };
 
-  console.log("Summary:");
+  console.log(`\nSummary:`);
   console.table(questionResults);
 }
 
@@ -165,6 +170,11 @@ function compareAnswers(
  */
 async function main() {
   const args = process.argv.slice(2);
+  if (args.length === 0) {
+    displayUsage();
+    process.exit(0);
+  }
+
   const folderPath = args
     .find((arg) => arg.startsWith("directory="))
     ?.split("=")[1];
@@ -200,9 +210,31 @@ async function main() {
     const file1 = await parseFile(questionFilePath);
     const file2 = await parseFile(answerFilePath);
     compareAnswers(file1, file2, suppressUnansweredLog);
-  } catch (error) {
-    console.error("An error occurred while processing the files:", error);
+  } catch (error: string | any) {
+    console.error("An error occurred:", error.message);
+    console.error("Stack trace:", error.stack);
   }
+}
+
+function displayUsage() {
+  console.log(
+    `========================================================================================`
+  );
+  console.log("Usage:");
+  console.log(
+    `  directory="path/to/your/directory"   Specify folder containing questions and answers.`
+  );
+  console.log("  nolog=unanswered   Suppress logging of unanswered questions.");
+  console.log(
+    "========================================================================================="
+  );
+  console.log("Examples:");
+  console.log(
+    `  npm run dev directory="path/to/your/directory" nolog=unanswered`
+  );
+  console.log(
+    "========================================================================================="
+  );
 }
 
 main().catch(console.error);
