@@ -7,83 +7,64 @@ type Option = { text: string; isCorrect: boolean };
 type Question = { question: string; options: Option[] };
 
 /**
- * Parses a .docx file and extracts questions and options.
- * Each question and its options are identified based on specific patterns in the text.
+ * Parses a .docx file to extract questions and their corresponding options.
+ * Each question is identified by its number, followed by the question text
+ * ending with a `?` or `:`, and a list of options.
  *
  * @param {string} filePath - The path to the .docx file to be parsed.
- * @returns {Promise<Question[]>} - A promise that resolves to an array of Question objects.
+ * @returns {Promise<Question[]>} - A promise that resolves to an array of extracted Question objects.
+ * Each question contains its text and a list of options with correctness flags.
+ *
+ * @throws {Error} If the file cannot be read or parsed.
  */
+
 async function parseFile(filePath: string): Promise<Question[]> {
   const result = await mammoth.extractRawText({ path: filePath });
   const lines = result.value.split("\n");
   const questions: Question[] = [];
-  let currentQuestion: Question | null = null;
 
   lines.forEach((line) => {
-    // Check if line contains question and answers together
-    const combinedMatch = line.match(/^(\d+\.)\s*(.*?[?:])\s*(A\..*)$/);
-    if (combinedMatch) {
-      if (currentQuestion) {
-        questions.push(currentQuestion);
-      }
-      currentQuestion = {
-        question: combinedMatch[1] + " " + combinedMatch[2].trim(),
-        options: [],
-      };
+    // Kiểm tra xem dòng có chứa câu hỏi và đáp án không
+    const match = line.match(/^(\d+\.)\s+(.*?[?:])\s*(A\..*)$/);
+    if (match) {
+      const questionText = `${match[1]} ${match[2].trim()}`;
+      const optionsText = match[3];
 
-      // Split answers after question
-      const answers = combinedMatch[3].split(/(?=[A-Z]\.)/);
-      answers.forEach((answer) => {
-        const optionMatch = answer.match(/^([A-Z])\.\s*(.*?)([;=]?)\s*$/);
-        if (optionMatch) {
-          const text = optionMatch[1].trim() + ". " + optionMatch[2].trim();
-          const isCorrect = optionMatch[3] === "=";
-          currentQuestion?.options.push({ text, isCorrect });
-        }
-      });
-    } else if (currentQuestion) {
-      // Handle separate answer lines
-      const optionMatch = line.match(/^([A-Z])\.\s*(.*?)([;=]?)\s*$/);
-      if (optionMatch) {
-        const text = optionMatch[1].trim() + ". " + optionMatch[2].trim();
-        const isCorrect = optionMatch[3] === "=";
-        currentQuestion.options.push({ text, isCorrect });
-      }
+      // Tách các đáp án
+      const options = optionsText
+        .split(/(?=[A-Z]\.)/)
+        .map((option) => {
+          const optionMatch = option.match(/^([A-Z])\.\s*(.*?)([;=]?)\s*$/);
+          if (optionMatch) {
+            const text = `${optionMatch[1]}. ${optionMatch[2].trim()}`;
+            const isCorrect = optionMatch[3] === "=";
+            return { text, isCorrect };
+          }
+          return null;
+        })
+        .filter(Boolean) as Option[];
+
+      // Thêm câu hỏi vào danh sách
+      questions.push({ question: questionText, options });
     }
   });
 
-  // Add final question if present
-  if (currentQuestion) {
-    questions.push(currentQuestion);
-  }
-
   if (questions.length === 0) {
     console.warn(`No valid questions found in ${filePath}.`);
-    return [];
   }
 
   return questions;
 }
 
 /**
- * Retrieves the correct answer texts from a question object.
+ * Compares user-provided answers against correct answers and logs the results.
+ * For each question, checks if the answers match, are incorrect, or are unanswered.
  *
- * @param {Question} question - The question object to retrieve correct answers from.
- * @returns {string[]} - An array of correct answer texts.
- */
-function getCorrectAnswerTexts(question: Question): string[] {
-  return question.options
-    .filter((option) => option.isCorrect)
-    .map((option) => option.text);
-}
-
-/**
- * Compares answers from two sets of questions and displays the results.
- * For each question, checks if the answers match, are incorrect, or unanswered.
+ * @param {Question[]} file1 - Array of Question objects representing correct answers.
+ * @param {Question[]} file2 - Array of Question objects representing user-provided answers.
+ * @param {boolean} suppressUnansweredLog - If true, suppresses logs for unanswered questions.
  *
- * @param {Question[]} file1 - Array of Question objects representing the correct answers.
- * @param {Question[]} file2 - Array of Question objects representing the user's answers.
- * @param {boolean} suppressUnansweredLog - A flag to suppress logging of unanswered questions.
+ * @returns {void}
  */
 function compareAnswers(
   file1: Question[],
@@ -164,9 +145,17 @@ function compareAnswers(
 }
 
 /**
- * The main function that drives the script.
- * It validates the provided folder path, checks for the presence of question and answer files,
- * parses both files, and then compares the answers.
+ * Main function to run the script for comparing answers.
+ * - Validates the provided directory path.
+ * - Ensures the presence of required files (`questions.docx` and `answers.docx`).
+ * - Parses the files to extract questions and answers.
+ * - Compares the answers and logs results.
+ *
+ * Command-line arguments:
+ * - `directory=<path>`: Path to the folder containing the `.docx` files.
+ * - `nolog=unanswered`: Suppress logging of unanswered questions.
+ *
+ * @returns {Promise<void>}
  */
 async function main() {
   const args = process.argv.slice(2);
@@ -216,6 +205,13 @@ async function main() {
   }
 }
 
+/**
+ * Displays usage instructions for the script.
+ * Provides details about required and optional arguments and usage examples.
+ *
+ * @returns {void}
+ */
+
 function displayUsage() {
   console.log(
     `========================================================================================`
@@ -235,6 +231,18 @@ function displayUsage() {
   console.log(
     "========================================================================================="
   );
+}
+
+/**
+ * Retrieves the text of correct options for a given question.
+ *
+ * @param {Question} question - A question object containing options.
+ * @returns {string[]} - An array of text for all correct options.
+ */
+function getCorrectAnswerTexts(question: Question): string[] {
+  return question.options
+    .filter((option) => option.isCorrect)
+    .map((option) => option.text);
 }
 
 main().catch(console.error);
