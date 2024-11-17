@@ -71,10 +71,10 @@ D. Rome;[*]
 ```vbnet
 Un-answered question:
 1. What is the capital of France?
-A. Berlin;
-B. Madrid;
-C. Paris;
-D. Rome;
+A. Berlin
+B. Madrid
+C. Paris
+D. Rome
 
 Not correct question:
 2. What is the largest planet in our solar system?

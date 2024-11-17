@@ -93,7 +93,7 @@ function compareAnswers(
         console.log(
           chalk.cyan(
             `[U] Unanswered question:\n${q2.question}\n${q2.options
-              .map((opt, i) => `${opt.text};`)
+              .map((opt, i) => cleanText(opt.text))
               .join("\n")}\n`
           )
         );
