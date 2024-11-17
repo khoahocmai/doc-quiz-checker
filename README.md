@@ -31,20 +31,20 @@ A Node.js utility for parsing and comparing questions and answers from two `.doc
 
 1. Question: Each question should start with a number (e.g., '1. ','2. ') followed by the question text, ending with a '?' or ':'.
 2. Answer:
-   - Each answer option begins with a capital letter (e.g., 'A. ', 'B. ', 'C. ', 'D. ', ..., 'Z. '), followed by the answer text, ending with a ';'.
+   - Each answer option begins with a capital letter (e.g., 'A. ', 'B. ', 'C. ', 'D. ', ..., 'Z. '), followed by the answer text, ending with a ';[*]'.
    - Ensure that all answer choices are aligned and listed directly below the question.
 3. Choose an answer:
-   - Make sure the selected answer has a '=' at the end of the sentence look like '; ='
-   - Unselected answers will have a ';' at the end of the sentence.
+   - Make sure the selected answer has a '=' at the end of the sentence look like ';[*] ='
+   - Unselected answers will have a ';[*]' at the end of the sentence.
 
 ## Example:
 
 ```vbnet
 1. What is the capital of France?
-A. Berlin;
-B. Madrid;
-C. Paris; =
-D. Rome;
+A. Berlin;[*]
+B. Madrid;[*]
+C. Paris;[*] =
+D. Rome;[*]
 ```
 
 ## Usage
@@ -78,8 +78,10 @@ D. Rome;
 
 Not correct question:
 2. What is the largest planet in our solar system?
-Your answers: Earth
-Correct answers: Jupiter
+- Your answers:
+  + Earth
+- Correct answers:
+  + Jupiter
 
 Summary:
 +--------------------+--------+
