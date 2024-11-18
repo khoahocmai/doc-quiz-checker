@@ -69,19 +69,19 @@ D. Rome;[*]
 ## Output
 
 ```vbnet
-Un-answered question:
+[U] Unanswered question:
 1. What is the capital of France?
 A. Berlin
 B. Madrid
 C. Paris
 D. Rome
 
-Not correct question:
+[X] Incorrect question:
 2. What is the largest planet in our solar system?
 - Your answers:
-  + Earth
+  + B. Earth
 - Correct answers:
-  + Jupiter
+  + A. Jupiter
 
 Summary:
 +--------------------+--------+

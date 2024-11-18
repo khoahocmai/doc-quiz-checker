@@ -69,7 +69,7 @@ function compareAnswers(
   const cleanText = (text: string) => text.replace(/\s*;\[\*\]\s*=?/, "");
 
   const questionMap = new Map(file2.map((q) => [q.question.split(" ")[0], q]));
-  file1.forEach((q1, index) => {
+  file1.forEach((q1) => {
     const q2 = questionMap.get(q1.question.split(" ")[0]);
     const correctAnswerTexts = getCorrectAnswerTexts(q1).map(cleanText);
 
@@ -93,7 +93,7 @@ function compareAnswers(
         console.log(
           chalk.cyan(
             `[U] Unanswered question:\n${q2.question}\n${q2.options
-              .map((opt, i) => cleanText(opt.text))
+              .map((opt) => cleanText(opt.text))
               .join("\n")}\n`
           )
         );
