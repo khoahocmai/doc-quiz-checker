@@ -88,10 +88,11 @@ Summary:
 | (index)            | Count  |
 +--------------------+--------+
 | Total questions    | 5      |
+| Answered questions | 4      |
 | Correct            | 3      |
 | Incorrect          | 1      |
+| Correct percentage │ '75.0%'|
 | Unanswered         | 1      |
-| Correct percentage │ '60.0%'|
 +-------------------+---------+
 ```
 

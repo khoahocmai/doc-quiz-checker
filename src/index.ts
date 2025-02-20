@@ -122,15 +122,17 @@ function compareAnswers(
   });
 
   const totalQuestions = correct + incorrect + unanswered;
+  const totalAnswerQuestions = correct + incorrect;
   const correctPercentage =
-    totalQuestions === 0 ? 0 : (correct / totalQuestions) * 100;
+    totalAnswerQuestions === 0 ? 0 : (correct / totalAnswerQuestions) * 100;
 
   const questionResults = {
     "Total questions": { Count: totalQuestions },
+    "Answered questions": { Count: totalAnswerQuestions },
     Correct: { Count: correct },
     Incorrect: { Count: incorrect },
-    Unanswered: { Count: unanswered },
     "Correct percentage": { Count: `${correctPercentage.toFixed(1)}%` },
+    Unanswered: { Count: unanswered },
   };
 
   console.log(`\nSummary:`);
